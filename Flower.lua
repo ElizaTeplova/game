@@ -13,13 +13,28 @@ function mt:setCollider()
     self.collider:setType('static')
     self.collider:setFixedRotation(true)
     self.collider:setObject(self)
+    self:initializeSprites()
+end
+
+function mt:initializeSprites()
+    local flowers = love.filesystem.getDirectoryItems('resources/sprites/flower')
+    self.flowers = {}
+    for _, img in ipairs(flowers) do
+        self.flowers[#self.flowers + 1] = love.graphics.newImage('resources/sprites/flower/' .. img)
+    end
 end
 
 function mt:update()
-    if self.collider:enter('Player') then
-        local mapW = self.gameMap.width * self.gameMap.tilewidth
-        local mapH = self.gameMap.height * self.gameMap.tileheight
-        self.collider:setPosition(math.random(0, mapW), math.random(0, mapH))
+    if self.collider:enter('Player') or self.collider:enter('Wall') then
+        repeat
+            local mapW = self.gameMap.width * self.gameMap.tilewidth - 50
+            local mapH = self.gameMap.height * self.gameMap.tileheight - 50
+            local x = math.random(0, mapW)
+            local y = math.random(0, mapH)
+            self.collider:setPosition(x, y)
+            walls = world:queryCircleArea(x, y, 50, { 'Player', 'Wall'})
+        until next(walls) == nil
+        self.curFlower = ((self.curFlower + 1) % #self.flowers) + 1
     end
 
     flower.x = flower.collider:getX()
@@ -27,9 +42,7 @@ function mt:update()
 end
 
 function mt:draw()
-    love.graphics.setColor(1, 0, 0)
-    love.graphics.circle('fill', self.x, self.y, 200)
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(self.flowers[self.curFlower], self.x, self.y, nil, 4, nil, 15, 15)
 end
 
 function mt:load()
@@ -41,7 +54,10 @@ return {
         return setmetatable({
             world = world,
             gameMap = gameMap,
-            x = 100, y = 100
+            x = 200, y = 150,
+            flowerSprite = nil,
+            curFlower = 1,
+            flowers = {}
         }, mt)
     end
 }

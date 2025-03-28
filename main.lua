@@ -13,6 +13,7 @@ function love.load()
     world = wf.newWorld(0, 0)
     world:addCollisionClass('Player')
     world:addCollisionClass('Flower')
+    world:addCollisionClass('Wall')
 
     cam = camera()
     gameMap = sti('resources/maps/map.lua')
@@ -31,7 +32,9 @@ function love.load()
     if gameMap.layers['Walls'] then
         for i, obj in pairs(gameMap.layers['Walls'].objects) do
             local wall = world:newRectangleCollider(obj.x, obj.y, obj.width, obj.height)
+            wall:setCollisionClass('Wall')
             wall:setType('static')
+            wall:setObject(wall)
             table.insert(walls, wall)
         end
     end
@@ -55,9 +58,6 @@ function love.update(dt)
 end
 
 function love.draw()
-    --love.graphics.circle("fill", player.x, player.y, 100)
-    --love.graphics.draw(player.sprite, player.x, player.y)
-    --love.graphics.draw(background, 0, 0)
     cam:attach()
         -- gameMap:draw()
         gameMap:drawLayer(gameMap.layers['Ground'])
