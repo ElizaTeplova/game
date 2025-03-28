@@ -56,7 +56,7 @@ return {
             gameMap = gameMap,
             x = 200, y = 150,
             flowerSprite = nil,
-            curFlower = 1,
+            curFlower = 3,
             flowers = {}
         }, mt)
     end

@@ -1,4 +1,5 @@
 function love.load()
+    math.randomseed(os.time())
     -- region Import
     anim8 = require 'anim8/anim8' -- animatons
     love.graphics.setDefaultFilter('nearest', 'nearest')
@@ -62,8 +63,8 @@ function love.draw()
         -- gameMap:draw()
         gameMap:drawLayer(gameMap.layers['Ground'])
         player.anim:draw(player.spriteSheet, player.x, player.y, nil, 6, nil, 6, 9)
-        gameMap:drawLayer(gameMap.layers['Trees'])
         flower:draw()
-        world:draw() -- if you wanna see colliders in the world
+        gameMap:drawLayer(gameMap.layers['Trees'])
+        --world:draw() -- if you wanna see colliders in the world
     cam:detach()
 end
