@@ -7,6 +7,41 @@
 local mt = {}
 mt.__index = mt
 
+function mt:setCollider()
+    self.collider = world:newBSGRectangleCollider(400, 250, 50, 100, 10)
+    self.collider:setCollisionClass('Flower')
+    self.collider:setType('static')
+    self.collider:setFixedRotation(true)
+    self.collider:setObject(self)
+end
+
+function mt:update()
+    if self.collider:enter('Player') then
+        local mapW = self.gameMap.width * self.gameMap.tilewidth
+        local mapH = self.gameMap.height * self.gameMap.tileheight
+        self.collider:setPosition(math.random(0, mapW), math.random(0, mapH))
+    end
+
+    flower.x = flower.collider:getX()
+    flower.y = flower.collider:getY()
+end
+
+function mt:draw()
+    love.graphics.setColor(1, 0, 0)
+    love.graphics.circle('fill', self.x, self.y, 200)
+    love.graphics.setColor(1, 1, 1)
+end
+
 function mt:load()
 
 end
+
+return {
+    new = function(world, gameMap)
+        return setmetatable({
+            world = world,
+            gameMap = gameMap,
+            x = 100, y = 100
+        }, mt)
+    end
+}

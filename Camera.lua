@@ -8,11 +8,30 @@ local mt = {}
 mt.__index = mt
 
 function mt:update(dt)
+    self.cam:lookAt(self.player.x, self.player.y)
 
+    local w = love.graphics.getWidth()
+    local h = love.graphics.getHeight()
+
+    -- Left border
+    if self.cam.x < w / 2 then self.cam.x = w / 2 end
+    -- Top border
+    if self.cam.y < h / 2 then self.cam.y = h / 2 end
+
+    local mapW = self.gameMap.width * self.gameMap.tilewidth
+    local mapH = self.gameMap.height * self.gameMap.tileheight
+
+    -- Right border
+    if self.cam.x > (mapW - w / 2) then self.cam.x = mapW - w / 2 end
+    -- Bottom border
+    if self.cam.y > (mapH - h / 2) then self.cam.y = mapH - h / 2 end
 end
 
 return {
-    new = function(player, world)
-        return setmetatable({}, mt)
+    new = function(cam, player, gameMap)
+        return setmetatable({
+            cam = cam,
+            player = player, gameMap = gameMap
+        }, mt)
     end
 }

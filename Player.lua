@@ -23,7 +23,10 @@ end
 
 function mt:setCollider()
     self.collider = world:newBSGRectangleCollider(400, 250, 50, 100, 10)
+    --self.collider:setCollisionClass('Player')
+    self.collider:setCollisionClass('Player')
     self.collider:setFixedRotation(true)
+    self.collider:setObject(self)
 end
 
 function mt:update(dt)
@@ -60,11 +63,12 @@ function mt:update(dt)
 end
 
 return {
-    new = function(x, y, world)
+    new = function(x, y, world, gameMap)
         return setmetatable({
             x = x, y = y,
             speed = 300,
-            world = world
+            world = world,
+            gameMap = gameMap
         }, mt)
     end
 }
