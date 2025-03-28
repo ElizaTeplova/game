@@ -1,33 +1,19 @@
 function love.load()
     anim8 = require 'anim8/anim8' -- animatons
+    love.graphics.setDefaultFilter('nearest', 'nearest')
     sti = require 'Simple-Tiled-Implementation/sti' -- map generation
     camera = require 'hump/camera' -- camera chasing player
     wf = require 'windfield/windfield'
+    Player = require 'Player'
 
     world = wf.newWorld(0, 0)
+    player = Player.new(400, 200, world)
+    player:loadAnimation()
+    player:setCollider()
 
     cam = camera()
-    love.graphics.setDefaultFilter('nearest', 'nearest')
+
     gameMap = sti('resources/maps/map.lua')
-
-
-    player = {}
-    player.collider = world:newBSGRectangleCollider(400, 250, 50, 100, 10)
-    player.collider:setFixedRotation(true)
-    player.x = 400
-    player.y = 200
-    player.speed = 300
-    --player.sprite = love.graphics.newImage('resources/sprites/parrot.png')
-    player.spriteSheet = love.graphics.newImage('resources/sprites/player-sheet.png')
-    player.grid = anim8.newGrid(12, 18, player.spriteSheet:getWidth(), player.spriteSheet:getHeight());
-
-    player.animations = {}
-    player.animations.down = anim8.newAnimation(player.grid('1-4', 1), 0.2)
-    player.animations.up = anim8.newAnimation(player.grid('1-4', 4), 0.2)
-    player.animations.left = anim8.newAnimation(player.grid('1-4', 2), 0.2)
-    player.animations.right = anim8.newAnimation(player.grid('1-4', 3), 0.2)
-
-    player.anim = player.animations.left
 
     --background = love.graphics.newImage('resources/sprites/background.png')
     walls = {}
@@ -46,36 +32,7 @@ function love.load()
 end
 
 function love.update(dt)
-    local isMoving = false
-    local vx = 0
-    local vy = 0
-
-    if love.keyboard.isDown("right") then
-        vx = player.speed
-        player.anim = player.animations.right
-        isMoving = true
-    end
-    if love.keyboard.isDown("left") then
-        vx = -player.speed
-        player.anim = player.animations.left
-        isMoving = true
-    end
-    if love.keyboard.isDown("up") then
-        vy = -player.speed
-        player.anim = player.animations.up
-        isMoving = true
-    end
-    if love.keyboard.isDown("down") then
-        vy = player.speed
-        player.anim = player.animations.down
-        isMoving = true
-    end
-
-    if isMoving == false then
-        player.anim:gotoFrame(2)
-    end
-    player.collider:setLinearVelocity(vx, vy)
-
+    player:update(dt)
     world:update(dt)
     player.x = player.collider:getX()
     player.y = player.collider:getY()
@@ -108,8 +65,8 @@ function love.draw()
     cam:attach()
         -- gameMap:draw()
         gameMap:drawLayer(gameMap.layers['Ground'])
-    player.anim:draw(player.spriteSheet, player.x, player.y, nil, 6, nil, 6, 9)
-    gameMap:drawLayer(gameMap.layers['Trees'])
+        player.anim:draw(player.spriteSheet, player.x, player.y, nil, 6, nil, 6, 9)
+        gameMap:drawLayer(gameMap.layers['Trees'])
     --world:draw() -- if you wanna see colliders in the world
     cam:detach()
 end
