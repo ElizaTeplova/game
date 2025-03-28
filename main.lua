@@ -66,5 +66,16 @@ function love.draw()
         flower:draw()
         gameMap:drawLayer(gameMap.layers['Trees'])
         --world:draw() -- if you wanna see colliders in the world
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.print('R - reset flower position', cam.x + 250, cam.y - 250)
+        love.graphics.print('Player: ' .. math.floor(player.x) .. ';' .. math.floor(player.y), cam.x + 250, cam.y - 200)
+        love.graphics.print('Flower: ' .. flower.x .. ';' .. flower.y, cam.x + 250, cam.y - 150)
+        love.graphics.setColor(1, 1, 1)
     cam:detach()
+end
+
+function love.keypressed(key)
+    if key == 'r' then
+        flower:changePlace()
+    end
 end

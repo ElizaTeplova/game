@@ -19,6 +19,11 @@ function mt:loadAnimation()
     self.animations.right = anim8.newAnimation(self.grid('1-4', 3), 0.2)
 
     self.anim = self.animations.left
+    self:initOutsideSound()
+end
+
+function mt:initOutsideSound()
+    self.outsideSound = love.audio.newSource('resources/sounds/uletaiu-na-gaitii-no-eto-minus-ushi.mp3', 'static')
 end
 
 function mt:setCollider()
@@ -58,6 +63,11 @@ function mt:update(dt)
 
     if isMoving == false then
         self.anim:gotoFrame(2)
+    end
+
+    if player.x <= 0 or player.x >= self.gameMap.width * self.gameMap.tilewidth or
+        player.y <= 0 or player.y >= self.gameMap.height * self.gameMap.tileheight then
+        self.outsideSound:play()
     end
     self.collider:setLinearVelocity(vx, vy)
 end
